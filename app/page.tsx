@@ -1,26 +1,31 @@
 "use client";
 
 import { User } from "@/components/types/users.types";
-import { Search } from "lucide-react";
+import { Search, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const page = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [users, setUsers] = useState<User[]>([]); // API data
+  const [loading, setLoading] = useState(true); // request მიმდინარეობს?
+  const [error, setError] = useState(""); // error message
 
   useEffect(() => {
+    // component-ის mount-ზე ერთხელ ვუშვებთ request-ს
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
+        // response body-ს JSON-ად ვაქცევთ
         return response.json();
       })
       .then((data) => {
+        // მიღებულ users-ს state-ში ვინახავთ
         setUsers(data);
       })
       .catch((error) => {
+        // request-ის ჩავარდნისას error message ვინახავთ
         setError(error.message);
       })
       .finally(() => {
+        // success/error-ის მიუხედავად loading დასრულდა
         setLoading(false);
       });
   }, []);
@@ -52,10 +57,25 @@ const page = () => {
           </div>
         </div>
 
-        <div className="w-full h-100 rounded-[10px] mt-7.5 bg-blue-400">
-          <ul>
+        <div className="w-full h-100 rounded-[10px] mt-7.5 custom-scrollbar overflow-y-auto py-0.5">
+          <ul className="w-full h-auto flex flex-col ">
             {users.map((user) => (
-              <li key={user.id}>{user.name}</li>
+              <li
+                key={user.id}
+                className="flex flex-row items-center w-full h-15 border rounded-[10px] border-gray-400 px-2"
+              >
+                <UserRound width={35} height={35} className="text-gray-700" />
+                <div className="flex flex-col justify-center leading-4 ml-2">
+                  <p className="text-[16px] font-medium">{user.name}</p>
+                  <p className="text-[12px] font-medium text-gray-400">
+                    {user.email}
+                  </p>
+                </div>
+
+                <button className="ml-auto w-25 h-7.5 border-none text-[14px] rounded-[5px] font-semibold cursor-pointer text-blue-700 bg-blue-200 hover:bg-blue-50">
+                  View Details
+                </button>
+              </li>
             ))}
           </ul>
         </div>
